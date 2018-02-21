@@ -28,12 +28,14 @@ class JsonBuffer : Internals::NonCopyable {
   //
   // Returns a reference to the new JsonArray or JsonArray::invalid() if the
   // allocation fails.
+  // TODO: delete
   JsonArray &createArray();
 
   // Allocates an empty JsonObject.
   //
   // Returns a reference to the new JsonObject or JsonObject::invalid() if the
   // allocation fails.
+  // TODO: delete
   JsonObject &createObject();
 
   // Duplicates a string
@@ -75,4 +77,4 @@ class JsonBuffer : Internals::NonCopyable {
 #endif
   }
 };
-}
+}  // namespace ArduinoJson
