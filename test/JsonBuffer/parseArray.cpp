@@ -6,313 +6,314 @@
 #include <catch.hpp>
 
 TEST_CASE("JsonBuffer::parseArray()") {
-  DynamicJsonBuffer jb;
+  DynamicJsonArray arr;
 
   SECTION("EmptyArray") {
-    JsonArray& arr = jb.parseArray("[]");
+    bool success = deserializeJson(arr, "[]");
 
-    REQUIRE(arr.success());
+    REQUIRE(success == true);
     REQUIRE(0 == arr.size());
   }
 
   SECTION("MissingOpeningBracket") {
-    JsonArray& arr = jb.parseArray("]");
-    REQUIRE_FALSE(arr.success());
+    bool success = deserializeJson(arr, "]");
+    REQUIRE_FALSE(success == true);
   }
 
   SECTION("ArrayWithNoEnd") {
-    JsonArray& arr = jb.parseArray("[");
-    REQUIRE_FALSE(arr.success());
+    bool success = deserializeJson(arr, "[");
+    REQUIRE_FALSE(success == true);
   }
 
   SECTION("EmptyArrayWithLeadingSpaces") {
-    JsonArray& arr = jb.parseArray("  []");
+    bool success = deserializeJson(arr, "  []");
 
-    REQUIRE(arr.success());
+    REQUIRE(success == true);
     REQUIRE(0 == arr.size());
   }
 
   SECTION("Garbage") {
-    JsonArray& arr = jb.parseArray("%*$£¤");
+    bool success = deserializeJson(arr, "%*$£¤");
 
-    REQUIRE_FALSE(arr.success());
+    REQUIRE_FALSE(success == true);
   }
 
   SECTION("OneInteger") {
-    JsonArray& arr = jb.parseArray("[42]");
+    bool success = deserializeJson(arr, "[42]");
 
-    REQUIRE(arr.success());
+    REQUIRE(success == true);
     REQUIRE(1 == arr.size());
     REQUIRE(arr[0] == 42);
   }
 
   SECTION("OneIntegerWithSpacesBefore") {
-    JsonArray& arr = jb.parseArray("[ \t\r\n42]");
+    bool success = deserializeJson(arr, "[ \t\r\n42]");
 
-    REQUIRE(arr.success());
+    REQUIRE(success == true);
     REQUIRE(1 == arr.size());
     REQUIRE(arr[0] == 42);
   }
 
   SECTION("OneIntegerWithSpaceAfter") {
-    JsonArray& arr = jb.parseArray("[42 \t\r\n]");
+    bool success = deserializeJson(arr, "[42 \t\r\n]");
 
-    REQUIRE(arr.success());
+    REQUIRE(success == true);
     REQUIRE(1 == arr.size());
     REQUIRE(arr[0] == 42);
   }
 
   SECTION("TwoIntegers") {
-    JsonArray& arr = jb.parseArray("[42,84]");
+    bool success = deserializeJson(arr, "[42,84]");
 
-    REQUIRE(arr.success());
+    REQUIRE(success == true);
     REQUIRE(2 == arr.size());
     REQUIRE(arr[0] == 42);
     REQUIRE(arr[1] == 84);
   }
 
   SECTION("TwoDoubles") {
-    JsonArray& arr = jb.parseArray("[4.2,1e2]");
+    bool success = deserializeJson(arr, "[4.2,1e2]");
 
-    REQUIRE(arr.success());
+    REQUIRE(success == true);
     REQUIRE(2 == arr.size());
     REQUIRE(arr[0] == 4.2);
     REQUIRE(arr[1] == 1e2);
   }
 
   SECTION("UnsignedLong") {
-    JsonArray& arr = jb.parseArray("[4294967295]");
+    bool success = deserializeJson(arr, "[4294967295]");
 
-    REQUIRE(arr.success());
+    REQUIRE(success == true);
     REQUIRE(1 == arr.size());
     REQUIRE(arr[0] == 4294967295UL);
   }
 
   SECTION("TwoBooleans") {
-    JsonArray& arr = jb.parseArray("[true,false]");
+    bool success = deserializeJson(arr, "[true,false]");
 
-    REQUIRE(arr.success());
+    REQUIRE(success == true);
     REQUIRE(2 == arr.size());
     REQUIRE(arr[0] == true);
     REQUIRE(arr[1] == false);
   }
 
   SECTION("TwoNulls") {
-    JsonArray& arr = jb.parseArray("[null,null]");
+    bool success = deserializeJson(arr, "[null,null]");
 
-    REQUIRE(arr.success());
+    REQUIRE(success == true);
     REQUIRE(2 == arr.size());
     REQUIRE(arr[0].as<char*>() == 0);
     REQUIRE(arr[1].as<char*>() == 0);
   }
 
   SECTION("TwoStringsDoubleQuotes") {
-    JsonArray& arr = jb.parseArray("[ \"hello\" , \"world\" ]");
+    bool success = deserializeJson(arr, "[ \"hello\" , \"world\" ]");
 
-    REQUIRE(arr.success());
+    REQUIRE(success == true);
     REQUIRE(2 == arr.size());
     REQUIRE(arr[0] == "hello");
     REQUIRE(arr[1] == "world");
   }
 
   SECTION("TwoStringsSingleQuotes") {
-    JsonArray& arr = jb.parseArray("[ 'hello' , 'world' ]");
+    bool success = deserializeJson(arr, "[ 'hello' , 'world' ]");
 
-    REQUIRE(arr.success());
+    REQUIRE(success == true);
     REQUIRE(2 == arr.size());
     REQUIRE(arr[0] == "hello");
     REQUIRE(arr[1] == "world");
   }
 
   SECTION("TwoStringsNoQuotes") {
-    JsonArray& arr = jb.parseArray("[ hello , world ]");
+    bool success = deserializeJson(arr, "[ hello , world ]");
 
-    REQUIRE(arr.success());
+    REQUIRE(success == true);
     REQUIRE(2 == arr.size());
     REQUIRE(arr[0] == "hello");
     REQUIRE(arr[1] == "world");
   }
 
   SECTION("EmptyStringsDoubleQuotes") {
-    JsonArray& arr = jb.parseArray("[\"\",\"\"]");
+    bool success = deserializeJson(arr, "[\"\",\"\"]");
 
-    REQUIRE(arr.success());
+    REQUIRE(success == true);
     REQUIRE(2 == arr.size());
     REQUIRE(arr[0] == "");
     REQUIRE(arr[1] == "");
   }
 
   SECTION("EmptyStringSingleQuotes") {
-    JsonArray& arr = jb.parseArray("[\'\',\'\']");
+    bool success = deserializeJson(arr, "[\'\',\'\']");
 
-    REQUIRE(arr.success());
+    REQUIRE(success == true);
     REQUIRE(2 == arr.size());
     REQUIRE(arr[0] == "");
     REQUIRE(arr[1] == "");
   }
 
   SECTION("EmptyStringNoQuotes") {
-    JsonArray& arr = jb.parseArray("[,]");
+    bool success = deserializeJson(arr, "[,]");
 
-    REQUIRE(arr.success());
+    REQUIRE(success == true);
     REQUIRE(2 == arr.size());
     REQUIRE(arr[0] == "");
     REQUIRE(arr[1] == "");
   }
 
   SECTION("ClosingDoubleQuoteMissing") {
-    JsonArray& arr = jb.parseArray("[\"]");
+    bool success = deserializeJson(arr, "[\"]");
 
-    REQUIRE_FALSE(arr.success());
+    REQUIRE_FALSE(success == true);
   }
 
   SECTION("ClosingSignleQuoteMissing") {
-    JsonArray& arr = jb.parseArray("[\']");
+    bool success = deserializeJson(arr, "[\']");
 
-    REQUIRE_FALSE(arr.success());
+    REQUIRE_FALSE(success == true);
   }
 
   SECTION("StringWithEscapedChars") {
-    JsonArray& arr = jb.parseArray("[\"1\\\"2\\\\3\\/4\\b5\\f6\\n7\\r8\\t9\"]");
+    bool success =
+        deserializeJson(arr, "[\"1\\\"2\\\\3\\/4\\b5\\f6\\n7\\r8\\t9\"]");
 
-    REQUIRE(arr.success());
+    REQUIRE(success == true);
     REQUIRE(1 == arr.size());
     REQUIRE(arr[0] == "1\"2\\3/4\b5\f6\n7\r8\t9");
   }
 
   SECTION("StringWithUnterminatedEscapeSequence") {
-    JsonArray& arr = jb.parseArray("\"\\\0\"", 4);
-    REQUIRE_FALSE(arr.success());
+    bool success = deserializeJson(arr, "\"\\\0\"", 4);
+    REQUIRE_FALSE(success == true);
   }
 
   SECTION("CCommentBeforeOpeningBracket") {
-    JsonArray& arr = jb.parseArray("/*COMMENT*/  [\"hello\"]");
+    bool success = deserializeJson(arr, "/*COMMENT*/  [\"hello\"]");
 
-    REQUIRE(arr.success());
+    REQUIRE(success == true);
     REQUIRE(1 == arr.size());
     REQUIRE(arr[0] == "hello");
   }
 
   SECTION("CCommentAfterOpeningBracket") {
-    JsonArray& arr = jb.parseArray("[/*COMMENT*/ \"hello\"]");
+    bool success = deserializeJson(arr, "[/*COMMENT*/ \"hello\"]");
 
-    REQUIRE(arr.success());
+    REQUIRE(success == true);
     REQUIRE(1 == arr.size());
     REQUIRE(arr[0] == "hello");
   }
 
   SECTION("CCommentBeforeClosingBracket") {
-    JsonArray& arr = jb.parseArray("[\"hello\"/*COMMENT*/]");
+    bool success = deserializeJson(arr, "[\"hello\"/*COMMENT*/]");
 
-    REQUIRE(arr.success());
+    REQUIRE(success == true);
     REQUIRE(1 == arr.size());
     REQUIRE(arr[0] == "hello");
   }
 
   SECTION("CCommentAfterClosingBracket") {
-    JsonArray& arr = jb.parseArray("[\"hello\"]/*COMMENT*/");
+    bool success = deserializeJson(arr, "[\"hello\"]/*COMMENT*/");
 
-    REQUIRE(arr.success());
+    REQUIRE(success == true);
     REQUIRE(1 == arr.size());
     REQUIRE(arr[0] == "hello");
   }
 
   SECTION("CCommentBeforeComma") {
-    JsonArray& arr = jb.parseArray("[\"hello\"/*COMMENT*/,\"world\"]");
+    bool success = deserializeJson(arr, "[\"hello\"/*COMMENT*/,\"world\"]");
 
-    REQUIRE(arr.success());
+    REQUIRE(success == true);
     REQUIRE(2 == arr.size());
     REQUIRE(arr[0] == "hello");
     REQUIRE(arr[1] == "world");
   }
 
   SECTION("CCommentAfterComma") {
-    JsonArray& arr = jb.parseArray("[\"hello\",/*COMMENT*/ \"world\"]");
+    bool success = deserializeJson(arr, "[\"hello\",/*COMMENT*/ \"world\"]");
 
-    REQUIRE(arr.success());
+    REQUIRE(success == true);
     REQUIRE(2 == arr.size());
     REQUIRE(arr[0] == "hello");
     REQUIRE(arr[1] == "world");
   }
 
   SECTION("CppCommentBeforeOpeningBracket") {
-    JsonArray& arr = jb.parseArray("//COMMENT\n\t[\"hello\"]");
+    bool success = deserializeJson(arr, "//COMMENT\n\t[\"hello\"]");
 
-    REQUIRE(arr.success());
+    REQUIRE(success == true);
     REQUIRE(1 == arr.size());
     REQUIRE(arr[0] == "hello");
   }
 
   SECTION("CppCommentAfterOpeningBracket") {
-    JsonArray& arr = jb.parseArray("[//COMMENT\n\"hello\"]");
+    bool success = deserializeJson(arr, "[//COMMENT\n\"hello\"]");
 
-    REQUIRE(arr.success());
+    REQUIRE(success == true);
     REQUIRE(1 == arr.size());
     REQUIRE(arr[0] == "hello");
   }
 
   SECTION("CppCommentBeforeClosingBracket") {
-    JsonArray& arr = jb.parseArray("[\"hello\"//COMMENT\r\n]");
+    bool success = deserializeJson(arr, "[\"hello\"//COMMENT\r\n]");
 
-    REQUIRE(arr.success());
+    REQUIRE(success == true);
     REQUIRE(1 == arr.size());
     REQUIRE(arr[0] == "hello");
   }
 
   SECTION("CppCommentAfterClosingBracket") {
-    JsonArray& arr = jb.parseArray("[\"hello\"]//COMMENT\n");
+    bool success = deserializeJson(arr, "[\"hello\"]//COMMENT\n");
 
-    REQUIRE(arr.success());
+    REQUIRE(success == true);
     REQUIRE(1 == arr.size());
     REQUIRE(arr[0] == "hello");
   }
 
   SECTION("CppCommentBeforeComma") {
-    JsonArray& arr = jb.parseArray("[\"hello\"//COMMENT\n,\"world\"]");
+    bool success = deserializeJson(arr, "[\"hello\"//COMMENT\n,\"world\"]");
 
-    REQUIRE(arr.success());
+    REQUIRE(success == true);
     REQUIRE(2 == arr.size());
     REQUIRE(arr[0] == "hello");
     REQUIRE(arr[1] == "world");
   }
 
   SECTION("CppCommentAfterComma") {
-    JsonArray& arr = jb.parseArray("[\"hello\",//COMMENT\n\"world\"]");
+    bool success = deserializeJson(arr, "[\"hello\",//COMMENT\n\"world\"]");
 
-    REQUIRE(arr.success());
+    REQUIRE(success == true);
     REQUIRE(2 == arr.size());
     REQUIRE(arr[0] == "hello");
     REQUIRE(arr[1] == "world");
   }
 
   SECTION("InvalidCppComment") {
-    JsonArray& arr = jb.parseArray("[/COMMENT\n]");
-    REQUIRE_FALSE(arr.success());
+    bool success = deserializeJson(arr, "[/COMMENT\n]");
+    REQUIRE_FALSE(success == true);
   }
 
   SECTION("InvalidComment") {
-    JsonArray& arr = jb.parseArray("[/*/\n]");
-    REQUIRE_FALSE(arr.success());
+    bool success = deserializeJson(arr, "[/*/\n]");
+    REQUIRE_FALSE(success == true);
   }
 
   SECTION("UnfinishedCComment") {
-    JsonArray& arr = jb.parseArray("[/*COMMENT]");
-    REQUIRE_FALSE(arr.success());
+    bool success = deserializeJson(arr, "[/*COMMENT]");
+    REQUIRE_FALSE(success == true);
   }
 
   SECTION("EndsInCppComment") {
-    JsonArray& arr = jb.parseArray("[//COMMENT");
-    REQUIRE_FALSE(arr.success());
+    bool success = deserializeJson(arr, "[//COMMENT");
+    REQUIRE_FALSE(success == true);
   }
 
   SECTION("AfterClosingStar") {
-    JsonArray& arr = jb.parseArray("[/*COMMENT*");
-    REQUIRE_FALSE(arr.success());
+    bool success = deserializeJson(arr, "[/*COMMENT*");
+    REQUIRE_FALSE(success == true);
   }
 
   SECTION("DeeplyNested") {
-    JsonArray& arr =
-        jb.parseArray("[[[[[[[[[[[[[[[[[[[\"Not too deep\"]]]]]]]]]]]]]]]]]]]");
-    REQUIRE(arr.success());
+    bool success = deserializeJson(
+        arr, "[[[[[[[[[[[[[[[[[[[\"Not too deep\"]]]]]]]]]]]]]]]]]]]");
+    REQUIRE(success == true);
   }
 }

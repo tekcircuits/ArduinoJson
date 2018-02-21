@@ -7,15 +7,16 @@
 
 TEST_CASE("JsonBuffer nested objects") {
   SECTION("ArrayNestedInObject") {
-    DynamicJsonBuffer jsonBuffer;
+    DynamicJsonObject object;
     char jsonString[] = " { \"ab\" : [ 1 , 2 ] , \"cd\" : [ 3 , 4 ] } ";
 
-    JsonObject &object = jsonBuffer.parseObject(jsonString);
+    bool success = deserializeJson(object, jsonString);
+
     JsonArray &array1 = object["ab"];
     const JsonArray &array2 = object["cd"];
     JsonArray &array3 = object["ef"];
 
-    REQUIRE(true == object.success());
+    REQUIRE(true == success);
 
     REQUIRE(true == array1.success());
     REQUIRE(true == array2.success());
@@ -35,16 +36,17 @@ TEST_CASE("JsonBuffer nested objects") {
   }
 
   SECTION("ObjectNestedInArray") {
-    DynamicJsonBuffer jsonBuffer;
+    DynamicJsonArray array;
     char jsonString[] =
         " [ { \"a\" : 1 , \"b\" : 2 } , { \"c\" : 3 , \"d\" : 4 } ] ";
 
-    JsonArray &array = jsonBuffer.parseArray(jsonString);
+    bool success = deserializeJson(array, jsonString);
+
     JsonObject &object1 = array[0];
     const JsonObject &object2 = array[1];
     JsonObject &object3 = array[2];
 
-    REQUIRE(true == array.success());
+    REQUIRE(true == success);
 
     REQUIRE(true == object1.success());
     REQUIRE(true == object2.success());

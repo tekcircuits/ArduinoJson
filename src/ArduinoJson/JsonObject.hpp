@@ -46,8 +46,8 @@ class JsonObject : public Internals::JsonPrintable<JsonObject>,
   // Create an empty JsonArray attached to the specified JsonBuffer.
   // You should not use this constructor directly.
   // Instead, use JsonBuffer::createObject() or JsonBuffer.parseObject().
-  explicit JsonObject(JsonBuffer* buffer) throw()
-      : Internals::List<JsonPair>(buffer) {}
+  explicit JsonObject(JsonBuffer* buf) throw()
+      : Internals::List<JsonPair>(buf) {}
 
   // Gets or sets the value associated with the specified key.
   //
@@ -318,5 +318,5 @@ struct JsonVariantDefault<JsonObject> {
     return JsonObject::invalid();
   }
 };
-}
-}
+}  // namespace Internals
+}  // namespace ArduinoJson
