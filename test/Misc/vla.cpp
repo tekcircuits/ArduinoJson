@@ -22,10 +22,10 @@ TEST_CASE("Variable Length Array") {
     char vla[i];
     strcpy(vla, "[42]");
 
-    StaticJsonBuffer<JSON_ARRAY_SIZE(1)> jsonBuffer;
-    JsonArray& arr = jsonBuffer.parseArray(vla);
+    StaticJsonArray<JSON_ARRAY_SIZE(1)> arr;
+    bool success = deserializeJson(arr, vla);
 
-    REQUIRE(true == arr.success());
+    REQUIRE(true == success);
   }
 
   SECTION("ParseObject") {
@@ -33,8 +33,8 @@ TEST_CASE("Variable Length Array") {
     char vla[i];
     strcpy(vla, "{\"a\":42}");
 
-    StaticJsonBuffer<JSON_OBJECT_SIZE(1)> jsonBuffer;
-    JsonObject& obj = jsonBuffer.parseObject(vla);
+    StaticJsonObject<JSON_OBJECT_SIZE(1)> obj;
+    deserializeJson(obj, vla);
 
     REQUIRE(true == obj.success());
   }
@@ -44,8 +44,8 @@ TEST_CASE("Variable Length Array") {
     char vla[i];
     strcpy(vla, "42");
 
-    StaticJsonBuffer<1> jsonBuffer;
-    JsonVariant variant = jsonBuffer.parse(vla);
+    StaticJsonVariant<1> variant;
+    deserializeJson(variant, vla);
 
     REQUIRE(42 == variant.as<int>());
   }

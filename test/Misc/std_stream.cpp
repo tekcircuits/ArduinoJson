@@ -59,26 +59,28 @@ TEST_CASE("std::stream") {
 
   SECTION("ParseArray") {
     std::istringstream json(" [ 42 /* comment */ ] ");
-    DynamicJsonBuffer jsonBuffer;
-    JsonArray& arr = jsonBuffer.parseArray(json);
-    REQUIRE(true == arr.success());
+    DynamicJsonArray arr;
+    bool success = deserializeJson(arr, json);
+
+    REQUIRE(true == success);
     REQUIRE(1 == arr.size());
     REQUIRE(42 == arr[0]);
   }
 
   SECTION("ParseObject") {
     std::istringstream json(" { hello : world // comment\n }");
-    DynamicJsonBuffer jsonBuffer;
-    JsonObject& obj = jsonBuffer.parseObject(json);
-    REQUIRE(true == obj.success());
+    DynamicJsonObject obj;
+    bool success = deserializeJson(obj, json);
+
+    REQUIRE(true == success);
     REQUIRE(1 == obj.size());
     REQUIRE(std::string("world") == obj["hello"]);
   }
 
   SECTION("ShouldNotReadPastTheEnd") {
     std::istringstream json("{}123");
-    DynamicJsonBuffer jsonBuffer;
-    jsonBuffer.parseObject(json);
+    DynamicJsonObject obj;
+    deserializeJson(obj, json);
     REQUIRE('1' == json.get());
   }
 }
