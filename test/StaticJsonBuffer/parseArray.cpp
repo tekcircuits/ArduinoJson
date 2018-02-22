@@ -6,66 +6,74 @@
 #include <catch.hpp>
 
 TEST_CASE("StaticJsonBuffer::parseArray()") {
-  SECTION("TooSmallBufferForEmptyArray") {
-    StaticJsonBuffer<JSON_ARRAY_SIZE(0) - 1> bufferTooSmall;
-    char input[] = "[]";
-    JsonArray& arr = bufferTooSmall.parseArray(input);
-    REQUIRE_FALSE(arr.success());
-  }
-
   SECTION("BufferOfTheRightSizeForEmptyArray") {
-    StaticJsonBuffer<JSON_ARRAY_SIZE(0)> bufferOfRightSize;
+    StaticJsonArray<JSON_ARRAY_SIZE(0)> arr;
     char input[] = "[]";
-    JsonArray& arr = bufferOfRightSize.parseArray(input);
-    REQUIRE(arr.success());
+
+    bool success = deserializeJson(arr, input);
+
+    REQUIRE(success == true);
   }
 
   SECTION("TooSmallBufferForArrayWithOneValue") {
-    StaticJsonBuffer<JSON_ARRAY_SIZE(1) - 1> bufferTooSmall;
+    StaticJsonArray<JSON_ARRAY_SIZE(1) - 1> arr;
     char input[] = "[1]";
-    JsonArray& arr = bufferTooSmall.parseArray(input);
-    REQUIRE_FALSE(arr.success());
+
+    bool success = deserializeJson(arr, input);
+
+    REQUIRE(success == false);
   }
 
   SECTION("BufferOfTheRightSizeForArrayWithOneValue") {
-    StaticJsonBuffer<JSON_ARRAY_SIZE(1)> bufferOfRightSize;
+    StaticJsonArray<JSON_ARRAY_SIZE(1)> arr;
     char input[] = "[1]";
-    JsonArray& arr = bufferOfRightSize.parseArray(input);
-    REQUIRE(arr.success());
+
+    bool success = deserializeJson(arr, input);
+
+    REQUIRE(success == true);
   }
 
   SECTION("TooSmallBufferForArrayWithNestedObject") {
-    StaticJsonBuffer<JSON_ARRAY_SIZE(1) + JSON_OBJECT_SIZE(0) - 1>
-        bufferTooSmall;
+    StaticJsonArray<JSON_ARRAY_SIZE(1) + JSON_OBJECT_SIZE(0) - 1> arr;
     char input[] = "[{}]";
-    JsonArray& arr = bufferTooSmall.parseArray(input);
-    REQUIRE_FALSE(arr.success());
+
+    bool success = deserializeJson(arr, input);
+
+    REQUIRE(success == false);
   }
 
   SECTION("BufferOfTheRightSizeForArrayWithNestedObject") {
-    StaticJsonBuffer<JSON_ARRAY_SIZE(1) + JSON_OBJECT_SIZE(0)>
-        bufferOfRightSize;
+    StaticJsonArray<JSON_ARRAY_SIZE(1) + JSON_OBJECT_SIZE(0)> arr;
     char input[] = "[{}]";
-    JsonArray& arr = bufferOfRightSize.parseArray(input);
-    REQUIRE(arr.success());
+
+    bool success = deserializeJson(arr, input);
+
+    REQUIRE(success == true);
   }
 
   SECTION("CharPtrNull") {
-    REQUIRE_FALSE(
-        StaticJsonBuffer<100>().parseArray(static_cast<char*>(0)).success());
+    StaticJsonArray<100> arr;
+
+    bool success = deserializeJson(arr, static_cast<char*>(0));
+
+    REQUIRE(success == false);
   }
 
   SECTION("ConstCharPtrNull") {
-    REQUIRE_FALSE(StaticJsonBuffer<100>()
-                      .parseArray(static_cast<const char*>(0))
-                      .success());
+    StaticJsonArray<100> arr;
+
+    bool success = deserializeJson(arr, static_cast<const char*>(0));
+
+    REQUIRE(success == false);
   }
 
   SECTION("CopyStringNotSpaces") {
-    StaticJsonBuffer<100> jsonBuffer;
-    jsonBuffer.parseArray("  [ \"1234567\" ] ");
-    REQUIRE(JSON_ARRAY_SIZE(1) + sizeof("1234567") == jsonBuffer.size());
-    // note we use a string of 8 bytes to be sure that the StaticJsonBuffer
+    StaticJsonArray<100> arr;
+
+    deserializeJson(arr, "  [ \"1234567\" ] ");
+
+    REQUIRE(JSON_ARRAY_SIZE(1) + sizeof("1234567") == arr.memoryUsage());
+    // note: we use a string of 8 bytes to be sure that the StaticJsonBuffer
     // will not insert bytes to enforce alignement
   }
 }

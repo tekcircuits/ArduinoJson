@@ -5,58 +5,64 @@
 #include <ArduinoJson.h>
 #include <catch.hpp>
 TEST_CASE("StaticJsonBuffer::parseObject()") {
-  SECTION("TooSmallBufferForEmptyObject") {
-    StaticJsonBuffer<JSON_OBJECT_SIZE(0) - 1> bufferTooSmall;
-    char input[] = "{}";
-    JsonObject& obj = bufferTooSmall.parseObject(input);
-    REQUIRE_FALSE(obj.success());
-  }
-
   SECTION("BufferOfTheRightSizeForEmptyObject") {
-    StaticJsonBuffer<JSON_OBJECT_SIZE(0)> bufferOfRightSize;
+    StaticJsonObject<JSON_OBJECT_SIZE(0)> obj;
     char input[] = "{}";
-    JsonObject& obj = bufferOfRightSize.parseObject(input);
-    REQUIRE(obj.success());
+
+    bool success = deserializeJson(obj, input);
+
+    REQUIRE(success == true);
   }
 
   SECTION("TooSmallBufferForObjectWithOneValue") {
-    StaticJsonBuffer<JSON_OBJECT_SIZE(1) - 1> bufferTooSmall;
+    StaticJsonObject<JSON_OBJECT_SIZE(1) - 1> obj;
     char input[] = "{\"a\":1}";
-    JsonObject& obj = bufferTooSmall.parseObject(input);
-    REQUIRE_FALSE(obj.success());
+
+    bool success = deserializeJson(obj, input);
+
+    REQUIRE(success == false);
   }
 
   SECTION("BufferOfTheRightSizeForObjectWithOneValue") {
-    StaticJsonBuffer<JSON_OBJECT_SIZE(1)> bufferOfRightSize;
+    StaticJsonObject<JSON_OBJECT_SIZE(1)> obj;
     char input[] = "{\"a\":1}";
-    JsonObject& obj = bufferOfRightSize.parseObject(input);
-    REQUIRE(obj.success());
+
+    bool success = deserializeJson(obj, input);
+
+    REQUIRE(success == true);
   }
 
   SECTION("TooSmallBufferForObjectWithNestedObject") {
-    StaticJsonBuffer<JSON_OBJECT_SIZE(1) + JSON_ARRAY_SIZE(0) - 1>
-        bufferTooSmall;
+    StaticJsonObject<JSON_OBJECT_SIZE(1) + JSON_ARRAY_SIZE(0) - 1> obj;
     char input[] = "{\"a\":[]}";
-    JsonObject& obj = bufferTooSmall.parseObject(input);
-    REQUIRE_FALSE(obj.success());
+
+    bool success = deserializeJson(obj, input);
+
+    REQUIRE(success == false);
   }
 
   SECTION("BufferOfTheRightSizeForObjectWithNestedObject") {
-    StaticJsonBuffer<JSON_OBJECT_SIZE(1) + JSON_ARRAY_SIZE(0)>
-        bufferOfRightSize;
+    StaticJsonObject<JSON_OBJECT_SIZE(1) + JSON_ARRAY_SIZE(0)> obj;
     char input[] = "{\"a\":[]}";
-    JsonObject& obj = bufferOfRightSize.parseObject(input);
-    REQUIRE(obj.success());
+
+    bool success = deserializeJson(obj, input);
+
+    REQUIRE(success == true);
   }
 
   SECTION("CharPtrNull") {
-    REQUIRE_FALSE(
-        StaticJsonBuffer<100>().parseObject(static_cast<char*>(0)).success());
+    StaticJsonObject<100> obj;
+
+    bool success = deserializeJson(obj, static_cast<char*>(0));
+
+    REQUIRE(success == false);
   }
 
   SECTION("ConstCharPtrNull") {
-    REQUIRE_FALSE(StaticJsonBuffer<100>()
-                      .parseObject(static_cast<const char*>(0))
-                      .success());
+    StaticJsonObject<100> obj;
+
+    bool success = deserializeJson(obj, static_cast<const char*>(0));
+
+    REQUIRE(success == false);
   }
 }

@@ -32,12 +32,20 @@ TEST_CASE("DynamicJsonBuffer no memory") {
 
   SECTION("parseArray()") {
     char json[] = "[]";
-    REQUIRE_FALSE(_jsonBuffer.parseArray(json).success());
+    DynamicJsonArray arr;
+
+    bool success = deserializeJson(arr, json);
+
+    REQUIRE(success == false);
   }
 
   SECTION("parseObject()") {
     char json[] = "{}";
-    REQUIRE_FALSE(_jsonBuffer.parseObject(json).success());
+    DynamicJsonObject obj;
+
+    bool success = deserializeJson(obj, json);
+
+    REQUIRE(success == false);
   }
 
   SECTION("startString()") {
