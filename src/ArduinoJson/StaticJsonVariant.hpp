@@ -9,7 +9,7 @@
 
 namespace ArduinoJson {
 
-template <size_t CAPACITY>
+template <size_t CAPACITY = sizeof(JsonVariant)>
 class StaticJsonVariant : public JsonVariant {
   StaticJsonBuffer<CAPACITY - sizeof(JsonVariant)> _buffer;
 

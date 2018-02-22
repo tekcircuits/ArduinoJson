@@ -5,6 +5,7 @@
 #pragma once
 
 #include "JsonBuffer.hpp"
+#include "TypeTraits/Max.hpp"
 
 namespace ArduinoJson {
 namespace Internals {
@@ -108,12 +109,14 @@ class StaticJsonBufferBase : public JsonBuffer {
 // bytes.
 template <size_t CAPACITY>
 class StaticJsonBuffer : public Internals::StaticJsonBufferBase {
+  static const size_t ACTUAL_CAPACITY = Internals::Max<1, CAPACITY>::value;
+
  public:
   explicit StaticJsonBuffer()
-      : Internals::StaticJsonBufferBase(_buffer, CAPACITY) {}
+      : Internals::StaticJsonBufferBase(_buffer, ACTUAL_CAPACITY) {}
 
  private:
-  char _buffer[CAPACITY];
+  char _buffer[ACTUAL_CAPACITY];
 };
 }  // namespace ArduinoJson
 
