@@ -9,18 +9,21 @@
 
 namespace ArduinoJson {
 
-class DynamicJsonArray : public JsonArray {
-  DynamicJsonBuffer _buffer;
+template <typename TJsonBuffer>
+class JsonArrayWithBuffer : public JsonArray {
+  TJsonBuffer _buffer;
 
  public:
-  DynamicJsonArray() : JsonArray(&_buffer) {}
+  JsonArrayWithBuffer() : JsonArray(&_buffer) {}
 
   size_t memoryUsage() const {
     return _buffer.size() + sizeof(JsonArray);
   }
 
-  DynamicJsonBuffer& buffer() {
+  TJsonBuffer& buffer() {
     return _buffer;
   }
 };
+
+class DynamicJsonArray : public JsonArrayWithBuffer<DynamicJsonBuffer> {};
 }  // namespace ArduinoJson

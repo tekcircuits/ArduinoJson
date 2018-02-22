@@ -22,17 +22,9 @@ TEST_CASE("DynamicJsonBuffer no memory") {
     NoMemoryAllocator().deallocate(NULL);
   }
 
-  SECTION("createArray()") {
-    REQUIRE_FALSE(_jsonBuffer.createArray().success());
-  }
-
-  SECTION("createObject()") {
-    REQUIRE_FALSE(_jsonBuffer.createObject().success());
-  }
-
   SECTION("parseArray()") {
-    char json[] = "[]";
-    DynamicJsonArray arr;
+    char json[] = "[{}]";
+    JsonArrayWithBuffer<DynamicJsonBufferBase<NoMemoryAllocator> > arr;
 
     bool success = deserializeJson(arr, json);
 
@@ -40,8 +32,8 @@ TEST_CASE("DynamicJsonBuffer no memory") {
   }
 
   SECTION("parseObject()") {
-    char json[] = "{}";
-    DynamicJsonObject obj;
+    char json[] = "{[]}";
+    JsonObjectWithBuffer<DynamicJsonBufferBase<NoMemoryAllocator> > obj;
 
     bool success = deserializeJson(obj, json);
 

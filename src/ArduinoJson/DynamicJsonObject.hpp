@@ -9,13 +9,14 @@
 
 namespace ArduinoJson {
 
-class DynamicJsonObject : public JsonObject {
-  DynamicJsonBuffer _buffer;
+template <typename TBuffer>
+class JsonObjectWithBuffer : public JsonObject {
+  TBuffer _buffer;
 
  public:
-  DynamicJsonObject() : JsonObject(&_buffer) {}
+  JsonObjectWithBuffer() : JsonObject(&_buffer) {}
 
-  DynamicJsonBuffer& buffer() {
+  TBuffer& buffer() {
     return _buffer;
   }
 
@@ -23,4 +24,6 @@ class DynamicJsonObject : public JsonObject {
     return _buffer.size() + sizeof(JsonObject);
   }
 };
+
+class DynamicJsonObject : public JsonObjectWithBuffer<DynamicJsonBuffer> {};
 }  // namespace ArduinoJson
