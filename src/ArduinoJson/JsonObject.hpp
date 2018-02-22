@@ -311,6 +311,22 @@ class JsonObject : public Internals::JsonPrintable<JsonObject>,
   JsonObject& createNestedObject_impl(TStringRef key);
 };
 
+template <typename TBuffer>
+class JsonObjectWithBuffer : public JsonObject {
+  TBuffer _buffer;
+
+ public:
+  JsonObjectWithBuffer() : JsonObject(&_buffer) {}
+
+  TBuffer& buffer() {
+    return _buffer;
+  }
+
+  size_t memoryUsage() const {
+    return _buffer.size() + sizeof(JsonObject);
+  }
+};
+
 namespace Internals {
 template <>
 struct JsonVariantDefault<JsonObject> {

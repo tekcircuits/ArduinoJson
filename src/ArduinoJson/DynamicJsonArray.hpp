@@ -8,22 +8,5 @@
 #include "JsonArray.hpp"
 
 namespace ArduinoJson {
-
-template <typename TJsonBuffer>
-class JsonArrayWithBuffer : public JsonArray {
-  TJsonBuffer _buffer;
-
- public:
-  JsonArrayWithBuffer() : JsonArray(&_buffer) {}
-
-  size_t memoryUsage() const {
-    return _buffer.size() + sizeof(JsonArray);
-  }
-
-  TJsonBuffer& buffer() {
-    return _buffer;
-  }
-};
-
 class DynamicJsonArray : public JsonArrayWithBuffer<DynamicJsonBuffer> {};
 }  // namespace ArduinoJson

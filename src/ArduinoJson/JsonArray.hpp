@@ -216,6 +216,22 @@ class JsonArray : public Internals::JsonPrintable<JsonArray>,
   }
 };
 
+template <typename TJsonBuffer>
+class JsonArrayWithBuffer : public JsonArray {
+  TJsonBuffer _buffer;
+
+ public:
+  JsonArrayWithBuffer() : JsonArray(&_buffer) {}
+
+  size_t memoryUsage() const {
+    return _buffer.size() + sizeof(JsonArray);
+  }
+
+  TJsonBuffer &buffer() {
+    return _buffer;
+  }
+};
+
 namespace Internals {
 template <>
 struct JsonVariantDefault<JsonArray> {
